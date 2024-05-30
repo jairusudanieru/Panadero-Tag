@@ -1,0 +1,5 @@
+config:
+  tagWorld: "world_tag_arena"
+
+messages:
+  tagMessage: "<reset>You are now the tagger!"

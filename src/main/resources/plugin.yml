@@ -1,0 +1,9 @@
+name: Panadero-Tag
+version: '${project.version}'
+main: dev.jairusu.panaderotag.Panadero_Tag
+api-version: '1.20'
+
+commands:
+  startgame:
+  stopgame:
+  panaderotag:
