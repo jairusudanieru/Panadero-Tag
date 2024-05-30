@@ -9,7 +9,13 @@ import dev.jairusu.panaderotag.Methods.Configuration;
 import dev.jairusu.panaderotag.Methods.GlowManager;
 import dev.jairusu.panaderotag.Methods.TagManager;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -18,6 +24,7 @@ public final class Panadero_Tag extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        Bukkit.getPluginManager().registerEvents(new ClaimTrophy(), this);
         Bukkit.getPluginManager().registerEvents(new CommandSend(), this);
         Bukkit.getPluginManager().registerEvents(new ItemPickup(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerInteract(), this);
@@ -31,9 +38,21 @@ public final class Panadero_Tag extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        TagManager.getTeam().getEntries().clear();
-        AbilitiesManager.stopTaskTimer();
-        GlowManager.stopTaskTimer();
+        World world = Bukkit.getWorld(Configuration.getString("config.tagWorld"));
+        if (world == null) return;
+
+        for (String playerName : TagManager.getTeam().getEntries()) {
+            TagManager.getTeam().removeEntry(playerName);
+        }
+
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            if (!players.getWorld().getName().equals(world.getName())) continue;
+            players.removePotionEffect(PotionEffectType.GLOWING);
+            players.getInventory().clear();
+        }
+
+        world.getEntitiesByClass(Item.class).forEach(Entity::remove);
+        world.getEntitiesByClass(ArmorStand.class).forEach(Entity::remove);
         Configuration.getPlugin.getLogger().info("Tag Game Stopped");
     }
 }

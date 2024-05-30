@@ -1,9 +1,6 @@
 package dev.jairusu.panaderotag.Commands;
 
-import dev.jairusu.panaderotag.Methods.AbilitiesManager;
-import dev.jairusu.panaderotag.Methods.Configuration;
-import dev.jairusu.panaderotag.Methods.GlowManager;
-import dev.jairusu.panaderotag.Methods.TagManager;
+import dev.jairusu.panaderotag.Methods.*;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,8 +37,9 @@ public class StartGame implements TabCompleter, CommandExecutor {
       clearArena();
       setTagger(player);
       TagManager.teleportToRandom(player);
-      AbilitiesManager.startTaskTimer();
-      GlowManager.startTaskTimer(Bukkit.getWorld(Configuration.getString("config.tagWorld")));
+      AbilitiesManager.spawnAbilities();
+      GlowManager.runGlowManager();
+      SpawnTrophy.startSpawning();
       Configuration.getPlugin.getLogger().info("Tag Game Started");
       return true;
    }

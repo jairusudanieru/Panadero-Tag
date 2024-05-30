@@ -1,13 +1,13 @@
 package dev.jairusu.panaderotag.Commands;
 
-import dev.jairusu.panaderotag.Methods.AbilitiesManager;
-import dev.jairusu.panaderotag.Methods.Configuration;
-import dev.jairusu.panaderotag.Methods.GlowManager;
-import dev.jairusu.panaderotag.Methods.TagManager;
+import dev.jairusu.panaderotag.Methods.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class Main implements TabCompleter, CommandExecutor {
    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
       if (!sender.isOp()) return Arrays.asList("ping","");
       if (args.length != 1) return new ArrayList<>();
-      return Arrays.asList("reload","ping");
+      return Arrays.asList("reload","ping","spawnTrophy","despawnTrophy");
    }
 
    @Override
@@ -30,15 +30,25 @@ public class Main implements TabCompleter, CommandExecutor {
          return true;
       }
 
-      if (args[0].equals("reload")) {
-         TagManager.getTeam().getEntries().clear();
-         AbilitiesManager.stopTaskTimer();
-         GlowManager.stopTaskTimer();
-         Configuration.getPlugin.getLogger().info("Tag Game Stopped");
-         Configuration.getPlugin.reloadConfig();
-         sender.sendMessage("Configuration successfully reloaded");
-      } else if (args[0].equals("ping")) {
-         sender.sendMessage("pong");
+      switch (args[0]) {
+         case "reload":
+            Configuration.getPlugin.getLogger().info("Tag Game Stopped");
+            Configuration.getPlugin.reloadConfig();
+            sender.sendMessage("Configuration successfully reloaded");
+            break;
+         case "ping":
+            sender.sendMessage("pong");
+            break;
+         case "spawnTrophy":
+            if (!sender.isOp()) return true;
+            SpawnTrophy.spawnToRandom();
+            break;
+         case "despawnTrophy":
+            if (!sender.isOp()) return true;
+            if (!(sender instanceof Player)) return true;
+            Player player = (Player) sender;
+            player.getWorld().getEntitiesByClass(ArmorStand.class).forEach(Entity::remove);
+            break;
       }
       return true;
    }

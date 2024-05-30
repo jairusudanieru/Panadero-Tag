@@ -8,7 +8,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import net.kyori.adventure.text.Component;
 
@@ -19,7 +18,6 @@ import java.util.Random;
 public class AbilitiesManager {
 
    public static final List<Item> spawnedItems = new ArrayList<>();
-   public static BukkitRunnable task;
 
    private static final ItemStack[] spawnableMaterials = {
            speedBoostItem(),
@@ -27,37 +25,34 @@ public class AbilitiesManager {
            jumpBoostItem()
    };
 
-   public static void startTaskTimer() {
-      task = new BukkitRunnable() {
-         @Override
-         public void run() {
-            World world = Bukkit.getWorld(Configuration.getString("config.tagWorld"));
-            if (world == null) world = Bukkit.getWorlds().get(0);
+   public static void spawnAbilities() {
+      World world = Bukkit.getWorld(Configuration.getString("config.tagWorld"));
+      if (world == null) return;
 
-            world.getEntitiesByClass(Item.class).forEach(Entity::remove);
-            spawnedItems.clear();
+      Bukkit.getScheduler().runTaskTimer(Configuration.getPlugin, () -> {
+         world.getEntitiesByClass(Item.class).forEach(Entity::remove);
+         spawnedItems.clear();
+         if (TagManager.getTeam().getEntries().isEmpty()) return;
 
-            int minHeight = world.getMinHeight();
-            int maxHeight = world.getMaxHeight();
-            int worldSize = 75;
+         int minHeight = world.getMinHeight();
+         int maxHeight = world.getMaxHeight();
+         int worldSize = 75;
 
-            for (int x = -worldSize; x <= worldSize; x++) {
-               for (int z = -worldSize; z <= worldSize; z++) {
-                  for (int y = minHeight; y <= maxHeight; y++) {
-                     Location location = new Location(world, x, y, z);
-                     if (location.getBlock().getType() == Material.IRON_BLOCK) {
-                        Location spawnLocation = location.add(0.5, 1, 0.5);
-                        ItemStack randomItem = getRandomItem();
-                        Item spawnedItem = world.dropItem(spawnLocation, randomItem);
-                        spawnedItem.setVelocity(new Vector(0, 0, 0));
-                        spawnedItems.add(spawnedItem);
-                     }
+         for (int x = -worldSize; x <= worldSize; x++) {
+            for (int z = -worldSize; z <= worldSize; z++) {
+               for (int y = minHeight; y <= maxHeight; y++) {
+                  Location location = new Location(world, x, y, z);
+                  if (location.getBlock().getType() == Material.IRON_BLOCK) {
+                     Location spawnLocation = location.add(0.5, 1, 0.5);
+                     ItemStack randomItem = getRandomItem();
+                     Item spawnedItem = world.dropItem(spawnLocation, randomItem);
+                     spawnedItem.setVelocity(new Vector(0, 0, 0));
+                     spawnedItems.add(spawnedItem);
                   }
                }
             }
          }
-      };
-      task.runTaskTimer(Configuration.getPlugin, 1L, 2400L);
+      }, 1L, 2400L);
    }
 
    public static ItemStack speedBoostItem() {
@@ -91,18 +86,6 @@ public class AbilitiesManager {
       itemMeta.lore(lore);
       itemStack.setItemMeta(itemMeta);
       return itemStack;
-   }
-
-   public static void stopTaskTimer() {
-      if (task != null) {
-         task.cancel();
-         task = null;
-      }
-
-      World world = Bukkit.getWorld(Configuration.getString("config.tagWorld"));
-      if (world == null) world = Bukkit.getWorlds().get(0);
-      world.getEntitiesByClass(Item.class).forEach(Entity::remove);
-      spawnedItems.clear();
    }
 
    private static ItemStack getRandomItem() {
