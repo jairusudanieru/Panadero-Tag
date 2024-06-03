@@ -18,5 +18,9 @@ public class Configuration {
       return getPlugin.getConfig().getString(key);
    }
 
+   public static long getLong(String key) {
+      return getPlugin.getConfig().getLong(key);
+   }
+
 
 }

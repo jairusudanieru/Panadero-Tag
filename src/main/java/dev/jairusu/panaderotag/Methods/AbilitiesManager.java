@@ -52,7 +52,7 @@ public class AbilitiesManager {
                }
             }
          }
-      }, 1L, 2400L);
+      }, 0L, TagManager.abilitiesSpawnTime());
    }
 
    public static ItemStack speedBoostItem() {

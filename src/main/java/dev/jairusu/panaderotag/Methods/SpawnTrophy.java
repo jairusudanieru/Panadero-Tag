@@ -9,6 +9,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,13 @@ public class SpawnTrophy {
 
       for (Player player : Bukkit.getOnlinePlayers()) {
          if (!player.getWorld().equals(location.getWorld())) continue;
+         player.sendMessage(Configuration.formatText("<gold>A wild Trophy has been spawned!"));
          player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1, 1);
-         player.sendMessage(Configuration.formatText("<reset>A wild Trophy has been spawned!"));
+         if (TagManager.getTeam().hasPlayer(player)) {
+            player.sendMessage("Revealed all players for 5 seconds!");
+            continue;
+         }
+         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 1,true, false));
       }
    }
 
@@ -55,12 +61,16 @@ public class SpawnTrophy {
       spawn(randomLocation);
    }
 
-   public static void startSpawning() {
-      Bukkit.getScheduler().runTaskTimer(Configuration.getPlugin, ()-> {
-         if (TagManager.getTeam().getEntries().isEmpty()) return;
-         spawnToRandom();
-      },1800L, 1800L);
-   }
+   public static final BukkitTask[] task = new BukkitTask[1];
 
+   public static void startSpawning() {
+      task[0] = Bukkit.getScheduler().runTaskTimer(Configuration.getPlugin, () -> {
+         if (TagManager.getTeam().getEntries().isEmpty()) {
+            task[0].cancel();
+            return;
+         }
+         spawnToRandom();
+      }, TagManager.trophySpawnTime(), TagManager.trophySpawnTime());
+   }
 
 }

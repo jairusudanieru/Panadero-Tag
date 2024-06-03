@@ -38,11 +38,10 @@ public class PlayerTag implements Listener {
    private void setTagger(Player player) {
       TagManager.getTeam().addEntry(player.getName());
       player.sendMessage(Configuration.formatText(Configuration.getString("messages.tagMessage")));
-      player.playSound(player.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, 1, 1);
+      player.removePotionEffect(PotionEffectType.BLINDNESS);
+      player.removePotionEffect(PotionEffectType.SLOW);
       player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1,true, true));
       player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, PotionEffect.INFINITE_DURATION, 1,true, true));
-      player.setGameMode(GameMode.SPECTATOR);
-      Bukkit.getScheduler().runTaskLater(Configuration.getPlugin, ()-> player.setGameMode(GameMode.ADVENTURE), 1L);
    }
 
 }

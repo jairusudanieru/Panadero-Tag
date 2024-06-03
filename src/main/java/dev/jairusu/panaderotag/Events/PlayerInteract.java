@@ -9,13 +9,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlayerInteract implements Listener {
 
@@ -39,7 +37,7 @@ public class PlayerInteract implements Listener {
                player.removePotionEffect(PotionEffectType.GLOWING);
                Bukkit.getScheduler().runTaskLater(Configuration.getPlugin, ()-> {
                   player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, PotionEffect.INFINITE_DURATION, 1,true, false));
-               }, 1L);
+               }, 100L);
             }
          }
 
@@ -64,17 +62,28 @@ public class PlayerInteract implements Listener {
       Block block = event.getClickedBlock();
       if (block == null) return;
 
-      List<Material> blockList = new ArrayList<>();
-      blockList.add(Material.DARK_OAK_DOOR);
-      blockList.add(Material.SPRUCE_DOOR);
-      blockList.add(Material.BIRCH_DOOR);
-      blockList.add(Material.OAK_DOOR);
-      blockList.add(Material.JUNGLE_DOOR);
-      blockList.add(Material.ACACIA_DOOR);
-
       if (!world.getName().equals(Configuration.getString("config.tagWorld"))) return;
-      if (event.getAction() == Action.RIGHT_CLICK_BLOCK && blockList.contains(block.getType())) return;
       if (player.getGameMode().equals(GameMode.CREATIVE)) return;
+      if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+         Material clickedBlock = block.getType();
+         if (clickedBlock == Material.OAK_DOOR ||
+                 clickedBlock == Material.SPRUCE_DOOR ||
+                 clickedBlock == Material.BIRCH_DOOR ||
+                 clickedBlock == Material.JUNGLE_DOOR ||
+                 clickedBlock == Material.ACACIA_DOOR ||
+                 clickedBlock == Material.DARK_OAK_DOOR ||
+                 clickedBlock == Material.IRON_DOOR)
+            return;
+      }
+      event.setCancelled(true);
+   }
+
+   @EventHandler
+   public void onPlayerDrop(PlayerDropItemEvent event) {
+      Player player = event.getPlayer();
+      World world = player.getWorld();
+      if (!world.getName().equals(Configuration.getString("config.tagWorld"))) return;
+      if (player.isOp() && player.getGameMode().equals(GameMode.CREATIVE)) return;
       event.setCancelled(true);
    }
 

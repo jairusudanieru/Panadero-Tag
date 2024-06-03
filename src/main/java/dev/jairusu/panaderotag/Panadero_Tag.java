@@ -4,9 +4,8 @@ import dev.jairusu.panaderotag.Commands.Main;
 import dev.jairusu.panaderotag.Commands.StartGame;
 import dev.jairusu.panaderotag.Commands.StopGame;
 import dev.jairusu.panaderotag.Events.*;
-import dev.jairusu.panaderotag.Methods.AbilitiesManager;
 import dev.jairusu.panaderotag.Methods.Configuration;
-import dev.jairusu.panaderotag.Methods.GlowManager;
+import dev.jairusu.panaderotag.Methods.SpawnTrophy;
 import dev.jairusu.panaderotag.Methods.TagManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -51,6 +50,7 @@ public final class Panadero_Tag extends JavaPlugin {
             players.getInventory().clear();
         }
 
+        SpawnTrophy.task[0].cancel();
         world.getEntitiesByClass(Item.class).forEach(Entity::remove);
         world.getEntitiesByClass(ArmorStand.class).forEach(Entity::remove);
         Configuration.getPlugin.getLogger().info("Tag Game Stopped");

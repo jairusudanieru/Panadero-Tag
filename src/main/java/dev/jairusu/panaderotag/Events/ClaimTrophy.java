@@ -1,6 +1,7 @@
 package dev.jairusu.panaderotag.Events;
 
 import dev.jairusu.panaderotag.Methods.Configuration;
+import dev.jairusu.panaderotag.Methods.SpawnTrophy;
 import dev.jairusu.panaderotag.Methods.TagManager;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
@@ -27,6 +28,8 @@ public class ClaimTrophy implements Listener {
       if (world == null) return;
 
       armorStand.remove();
+      SpawnTrophy.task[0].cancel();
+      Bukkit.getScheduler().runTaskLater(Configuration.getPlugin, SpawnTrophy::startSpawning, 1L);
       if (TagManager.getTeam().hasPlayer(player)) {
          taggerBonus(world);
          return;
@@ -40,12 +43,12 @@ public class ClaimTrophy implements Listener {
          if (!world.equals(players.getWorld())) continue;
          players.playSound(players.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, 1, 1);
          if (TagManager.getTeam().hasPlayer(players)) {
-            players.sendMessage("<green>Slowed all players for 15 seconds!");
+            players.sendMessage(Configuration.formatText("<green>Slowed all players for 15 seconds!"));
             continue;
          }
 
          players.getInventory().clear();
-         players.sendMessage("<red>You have been slowed for 15 seconds!");
+         players.sendMessage(Configuration.formatText("<red>You have been slowed for 15 seconds!"));
          players.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 300, 20,true, false));
          players.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 300, 20,true, false));
          players.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 300, 1, true, false));
@@ -57,14 +60,12 @@ public class ClaimTrophy implements Listener {
          if (!world.equals(players.getWorld())) continue;
          players.playSound(players.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, 1, 1);
          if (!TagManager.getTeam().hasPlayer(players)) {
-            players.sendMessage("<green>The tagger has been detained for 10 seconds!");
+            players.sendMessage(Configuration.formatText("<green>The tagger has been detained for 10 seconds!"));
             continue;
          }
-         players.sendMessage("<red>You have been detained for 10 seconds!");
+         players.sendMessage(Configuration.formatText("<red>You have been detained for 10 seconds!"));
          players.teleport(new Location(world, -7.5, 90, -10.5, 0, 100));
-         Bukkit.getScheduler().runTaskLater(Configuration.getPlugin, ()-> {
-            TagManager.teleportToRandom(players);
-         }, 200L);
+         Bukkit.getScheduler().runTaskLater(Configuration.getPlugin, ()-> TagManager.teleportToRandom(players), 200L);
       }
    }
 

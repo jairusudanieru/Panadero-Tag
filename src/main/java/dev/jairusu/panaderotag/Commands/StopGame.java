@@ -1,8 +1,7 @@
 package dev.jairusu.panaderotag.Commands;
 
-import dev.jairusu.panaderotag.Methods.AbilitiesManager;
 import dev.jairusu.panaderotag.Methods.Configuration;
-import dev.jairusu.panaderotag.Methods.GlowManager;
+import dev.jairusu.panaderotag.Methods.SpawnTrophy;
 import dev.jairusu.panaderotag.Methods.TagManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -52,6 +51,7 @@ public class StopGame implements TabCompleter, CommandExecutor {
          players.getInventory().clear();
       }
 
+      SpawnTrophy.task[0].cancel();
       world.getEntitiesByClass(Item.class).forEach(Entity::remove);
       world.getEntitiesByClass(ArmorStand.class).forEach(Entity::remove);
       Configuration.getPlugin.getLogger().info("Tag Game Stopped");

@@ -1,5 +1,7 @@
 config:
   tagWorld: "world_tag_arena"
+  abilitiesSpawnTime: 2400
+  trophySpawnTime: 1800
 
 messages:
   tagMessage: "<reset>You are now the tagger!"

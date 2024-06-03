@@ -1,6 +1,7 @@
 package dev.jairusu.panaderotag.Events;
 
 import dev.jairusu.panaderotag.Methods.Configuration;
+import dev.jairusu.panaderotag.Methods.SpawnTrophy;
 import dev.jairusu.panaderotag.Methods.TagManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
@@ -32,11 +33,13 @@ public class QuitTagGame implements Listener {
 
       for (Player players : Bukkit.getOnlinePlayers()) {
          if (!players.getWorld().equals(previousWorld)) continue;
+         players.getInventory().clear();
          players.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);
          players.sendTitlePart(TitlePart.TITLE, Component.text("The tagger left the game!"));
          players.sendTitlePart(TitlePart.SUBTITLE, Component.text("Please start a new one to continue"));
       }
 
+      SpawnTrophy.task[0].cancel();
       previousWorld.getEntitiesByClass(Item.class).forEach(Entity::remove);
       previousWorld.getEntitiesByClass(ArmorStand.class).forEach(Entity::remove);
       Configuration.getPlugin.getLogger().info("Tag Game Stopped");
@@ -54,11 +57,13 @@ public class QuitTagGame implements Listener {
 
       for (Player players : Bukkit.getOnlinePlayers()) {
          if (!players.getWorld().equals(world)) continue;
+         players.getInventory().clear();
          players.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);
          players.sendTitlePart(TitlePart.TITLE, Component.text("The tagger left the game!"));
          players.sendTitlePart(TitlePart.SUBTITLE, Component.text("Please start a new one to continue"));
       }
 
+      SpawnTrophy.task[0].cancel();
       world.getEntitiesByClass(Item.class).forEach(Entity::remove);
       world.getEntitiesByClass(ArmorStand.class).forEach(Entity::remove);
       Configuration.getPlugin.getLogger().info("Tag Game Stopped");

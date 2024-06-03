@@ -38,7 +38,6 @@ public class StartGame implements TabCompleter, CommandExecutor {
       setTagger(player);
       TagManager.teleportToRandom(player);
       AbilitiesManager.spawnAbilities();
-      GlowManager.runGlowManager();
       SpawnTrophy.startSpawning();
       Configuration.getPlugin.getLogger().info("Tag Game Started");
       return true;

@@ -1,9 +1,7 @@
 package dev.jairusu.panaderotag.Methods;
 
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -37,6 +35,19 @@ public class TagManager {
       int randomIndex = random.nextInt(locations.size());
       Location randomLocation = locations.get(randomIndex);
       player.teleport(randomLocation);
+      Bukkit.getScheduler().runTaskLater(Configuration.getPlugin, ()-> {
+         player.playSound(player.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, 1, 1);
+         player.setGameMode(GameMode.SPECTATOR);
+         Bukkit.getScheduler().runTaskLater(Configuration.getPlugin, ()-> player.setGameMode(GameMode.ADVENTURE), 100L);
+      },1L);
+   }
+
+   public static long trophySpawnTime() {
+      return Configuration.getLong("config.trophySpawnTime");
+   }
+
+   public static long abilitiesSpawnTime() {
+      return Configuration.getLong("config.abilitiesSpawnTime");
    }
 
 }
